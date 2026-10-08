@@ -1,36 +1,50 @@
-# PROJEKT-KONTEXT: eBike-Haus Leipzig (eBH) - Odoo 18 Warenwirtschaft
+# PROJEKT-KONTEXT: eBike-Haus Leipzig (eBH) - Odoo WaWi
 
 ## 1. Unternehmung & Ziel
 Wir entwickeln Custom-Module für ein Fahrrad- und E-Bike-Einzelhandelsunternehmen ("eBike-Haus Leipzig"). 
 Das System dient als Warenwirtschaft (WaWi), Kasse (POS), Werkstattverwaltung und Lager für Fahrräder, E-Bikes, Teile und Zubehör.
 
 ## 2. Technische Umgebung & Stack
-- **System:** Odoo 18.0 Community Edition (Laufend in Docker auf Hostinger VPS)
+- **System:** Odoo Community Edition (Laufend in Docker auf Hostinger VPS)
+- **Version:** Definiert in `.env` (`ODOO_VERSION=19.0`)
 - **Datenbank:** PostgreSQL 16
-- **Architektur:** Der Inhalt dieses Git-Repositories wird auf dem Server direkt in den Odoo-Ordner `extra-addons/` gemountet.
-- **Automatisches Deployment:** Jeder Push auf den Branch `main` triggert eine GitHub Action, die den Server aktualisiert und den Odoo-Container neu startet.
+- **Verzeichnisstruktur:**
+  - `custom_addons/`: Alle eigenen Custom-Module liegen hier (in Docker gemountet nach `/mnt/extra-addons`).
+  - `odoo_core/`: Lokaler Read-Only-Referenzcode des Odoo-Core (wird von Git ignoriert).
+- **Automatisches Deployment:** Jeder Push auf den Branch `main` triggert eine GitHub Action (`.github/workflows/deploy.yml`), die den Server aktualisiert und den Odoo-Container neu startet.
 
-## 3. Strenge Entwicklungsregeln für Odoo 18
-1. **Niemals Core-Dateien modifizieren:** Jedes Feature MUSS als eigenständiges Modul in einem eigenen Unterverzeichnis angelegt werden (z. B. `bike_pos/`, `bike_workshop/`, `ebike_serial/`).
+## 3. Odoo Core Referenz (odoo_core/) & Auto-Download
+- **Speicherort des Core-Codes:** Liegt im Workspace-Ordner `odoo_core/` (z. B. `odoo_core/addons/` für Standardmodule wie `sale`, `product`, `stock`).
+- **Niemals Core-Dateien modifizieren:** `odoo_core/` dient ausschließlich als Read-Only-Referenz zur Ermittlung von Modellen, Methoden und XML-Views (XPaths).
+- **Was tun, wenn `odoo_core/` fehlt oder leer ist?**
+  Falls der Ordner nicht existiert oder leer ist, lade den Odoo Core automatisch herunter mit:
+  ```bash
+  git clone --depth 1 -b 19.0 https://github.com/odoo/odoo.git odoo_core
+  ```
+
+## 4. Strenge Entwicklungsregeln für Odoo
+1. **Module nur in `custom_addons/`:** Jedes Feature MUSS als eigenständiges Modul im Unterverzeichnis `custom_addons/<modul_name>/` angelegt werden.
 2. **Vererbung nutzen:**
    - In Python: Immer `_inherit = 'modell.name'` verwenden.
-   - In XML: Immer `<xpath expr="..." position="...">` verwenden, um Standardansichten zu erweitern.
-3. **Odoo 18 Syntax beachten:**
+   - In XML: Immer `<xpath expr="..." position="...">` verwenden, um Standardansichten aus `odoo_core/` zu erweitern.
+3. **Syntax beachten:**
    - Keine veralteten `attrs="..."`-Attribute in XML! Nutze direkte Attribute wie `invisible="not is_ebike"`, `readonly="state == 'done'"` oder `required="is_ebike"`.
 4. **Vollständige Modulstruktur bereitstellen:**
    Jedes neue Modul benötigt:
-   - `__manifest__.py` (mit korrekten `depends`, `license: LGPL-3`, `version: 18.0.1.0.0`)
+   - `__manifest__.py` (mit korrekten `depends`, `license: LGPL-3`, `version: 19.0.1.0.0`)
    - `__init__.py` (rekursiv in Unterordnern)
    - `models/` und `views/`
    - `security/ir.model.access.csv` (falls neue Modelle angelegt werden!)
+   - `tests/` mit automatisierten Unit-Tests (Zero-Bug-Policy)
 
-## 4. Fachliche Domänen-Logik (Fahrradhandel)
+## 5. Fachliche Domänen-Logik (Fahrradhandel)
 - **Fahrräder & E-Bikes:** Werden über `stock.lot` (Seriennummern) verwaltet. Wichtige Attribute: Rahmennummer, Rahmenhöhe, Akkukapazität (Wh), Motortyp (Bosch, Shimano etc.), Schlüsselnummer.
 - **Leasing:** In Deutschland relevant: Dienstrad-Leasing (JobRad, Bikeleasing, BusinessBike). Verkaufsaufträge und Rechnungen müssen Leasing-Referenzen unterstützen.
 - **Werkstatt:** Service- und Inspektionsaufträge benötigen Checklisten und Status-Tracking.
 
-## 5. Arbeitsweise von Zoo Code
+## 6. Arbeitsweise von Zoo Code
 - Wenn du eine Aufgabe erledigt und die Dateien geschrieben hast:
   1. Überprüfe die Syntax und Konsistenz aller `__manifest__.py` und `__init__.py`.
-  2. Führe im Terminal `git add .`, `git commit -m "..."` und `git push origin main` aus, damit das Deployment auf den Hostinger-Server automatisch startet.
-  3. Erkläre dem Nutzer kurz, welches Modul in Odoo unter "Apps" aktualisiert bzw. installiert werden muss.
+  2. Stelle sicher, dass automatisierte Tests in `tests/` vorhanden sind.
+  3. Führe im Terminal `git add .`, `git commit -m "..."` und `git push origin main` aus, damit das Deployment auf den Hostinger-Server automatisch startet.
+  4. Erkläre dem Nutzer kurz, welches Modul in Odoo unter "Apps" aktualisiert bzw. installiert werden muss.

@@ -38,9 +38,13 @@ Jedes erstellte Modul MUSS automatisierte Tests enthalten!
 
 ## 6. Referenz-Code (Odoo Core) & Arbeitsverzeichnisse
 - Dein Arbeitsverzeichnis für neue Module ist AUSSCHLIESSLICH `custom_addons/`.
-- Im Ordner `odoo_core/` liegt der originale Odoo Quellcode.
-- Nutze `odoo_core/`, um proaktiv nachzusehen, wie originale Modelle, Methoden (z. B. `_compute_*`) oder XML-Views aufgebaut sind, bevor du Code schreibst.
+- **Speicherort des Core-Codes:** Liegt im Ordner `odoo_core/` im Root des Workspace (insbesondere `odoo_core/addons/` für Standardmodule wie `sale`, `product`, `stock`, `account`, `base`).
 - **ABSOLUTE REGEL:** Du darfst NIEMALS Dateien im Ordner `odoo_core/` verändern oder erstellen. Dieser Ordner dient dir nur als Read-Only-Referenz (Lexikon) zur Vermeidung von Halluzinationen.
+- **Was tun, wenn `odoo_core/` fehlt oder leer ist?**
+  Falls der Ordner nicht existiert oder leer ist, lade den Odoo Core automatisch im Terminal herunter:
+  ```bash
+  git clone --depth 1 -b 19.0 https://github.com/odoo/odoo.git odoo_core
+  ```
 - Externe Python-Pakete können in einer `requirements.txt` erfasst werden.
 
 ## 7. Workflow-Abschluss
