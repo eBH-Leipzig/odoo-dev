@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 eBike-Haus.de GmbH
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<!-- Lager wie in Cycly: Laden am Johannisplatz (Hauptlager) und das
+     Außenlager (Halle für Fahrräder, dient als Nachschublager). -->
+<odoo noupdate="1">
+    <record id="stock.warehouse0" model="stock.warehouse">
+        <field name="name">Laden Johannisplatz</field>
+        <field name="code">LADEN</field>
+        <field name="sequence">1</field>
+    </record>
+
+    <record id="warehouse_aussenlager" model="stock.warehouse">
+        <field name="name">Außenlager</field>
+        <field name="code">AUSL</field>
+        <field name="sequence">2</field>
+        <field name="company_id" ref="base.main_company" />
+        <field name="partner_id" ref="base.main_partner" />
+    </record>
+</odoo>

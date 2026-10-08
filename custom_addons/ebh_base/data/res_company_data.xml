@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 eBike-Haus.de GmbH
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<!-- Firmenstammdaten, übernommen aus Cycly (Filiale "eBike-Haus.de GmbH")
+     und dem Impressum auf ebike-haus.de. noupdate: Änderungen, die später
+     in Odoo gemacht werden, werden bei Modul-Updates nicht überschrieben. -->
+<odoo noupdate="1">
+    <record id="base.EUR" model="res.currency">
+        <field name="active" eval="True" />
+    </record>
+
+    <record id="base.main_company" model="res.company">
+        <field name="name">eBike-Haus.de GmbH</field>
+        <field name="street">Johannisplatz 21</field>
+        <field name="zip">04103</field>
+        <field name="city">Leipzig</field>
+        <field name="state_id" ref="base.state_de_sn" />
+        <field name="country_id" ref="base.de" />
+        <field name="currency_id" ref="base.EUR" />
+        <field name="phone">+49 341 97854310</field>
+        <field name="email">leipzig@ebike-haus.de</field>
+        <field name="website">https://ebike-haus.de</field>
+        <field name="vat">DE340468638</field>
+        <field name="company_registry">HRB 38554</field>
+        <field name="l10n_de_stnr">231/108/18165</field>
+        <field name="report_footer" type="html">
+            <p>
+                eBike-Haus.de GmbH · Geschäftsführer: S. Selle, W. Schlicht ·
+                Amtsgericht Leipzig HRB 38554 · USt-IdNr. DE340468638 ·
+                St.-Nr. 231/108/18165 · WEEE-Reg.-Nr. DE 85773044
+            </p>
+        </field>
+    </record>
+</odoo>
