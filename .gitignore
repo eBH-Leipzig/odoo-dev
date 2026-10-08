@@ -1,0 +1,19 @@
+# Odoo Core Reference (Read-only reference for AI / developer, DO NOT upload to git)
+odoo_core/
+
+# Python & System
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Environment files
+.env
+
+# OS specific files
+.DS_Store
+Thumbs.db

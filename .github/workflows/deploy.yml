@@ -15,7 +15,6 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /docker/odoo-dev/extra-addons
-            git pull
             cd /docker/odoo-dev
+            git pull
             docker compose restart web
