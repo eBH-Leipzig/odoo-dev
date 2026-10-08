@@ -4,8 +4,8 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
-#: Kontenrahmen für die Buchhaltung (Export nach Collmex).
-EBH_CHART_TEMPLATE = "de_skr03"
+#: Kontenrahmen wie in Cycly (SKR04, z. B. 1600 Kasse, 4400 Erlöse 19 %).
+EBH_CHART_TEMPLATE = "de_skr04"
 
 
 def post_init_hook(env):

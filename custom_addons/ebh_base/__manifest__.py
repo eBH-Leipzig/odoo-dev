@@ -3,7 +3,7 @@
 {
     "name": "eBH Basis-Einrichtung",
     "summary": "Basis-Apps, Firmenstammdaten und Lager für das eBike-Haus Leipzig",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "category": "Hidden/Tools",
     "author": "eBike-Haus.de GmbH",
     "website": "https://ebike-haus.de",

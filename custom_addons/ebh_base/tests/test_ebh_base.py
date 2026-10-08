@@ -44,7 +44,7 @@ class TestEbhBase(TransactionCase):
 
     def test_german_chart_of_accounts(self):
         """Deutscher Kontenrahmen ist geladen, Basis-Einrichtung vollständig."""
-        self.assertEqual(self.company.chart_template, "de_skr03")
+        self.assertEqual(self.company.chart_template, "de_skr04")
         status = self.company.ebh_get_setup_status()
         self.assertTrue(status["ok"], status["issues"])
 
@@ -64,5 +64,5 @@ class TestEbhBase(TransactionCase):
 
     def test_existing_chart_not_overwritten(self):
         """Ein bereits geladener Kontenrahmen wird nie ersetzt."""
-        self.assertFalse(self.company._ebh_ensure_chart_template("de_skr04"))
-        self.assertEqual(self.company.chart_template, "de_skr03")
+        self.assertFalse(self.company._ebh_ensure_chart_template("de_skr03"))
+        self.assertEqual(self.company.chart_template, "de_skr04")

@@ -9,7 +9,7 @@ Grundmodul für das eBike-Haus Leipzig. Die Installation richtet ein:
 * **Firmenstammdaten** der eBike-Haus.de GmbH (aus Cycly und Impressum):
   Anschrift, Kontakt, USt-IdNr., Steuernummer, Handelsregister,
   Fußzeile für Belege.
-* **Kontenrahmen SKR03**, falls noch keiner geladen ist. Ein vorhandener
+* **Kontenrahmen SKR04** (wie in Cycly), falls noch keiner geladen ist. Ein vorhandener
   Kontenrahmen wird nie überschrieben.
 * **Lager:** "Laden Johannisplatz" (LADEN) als Hauptlager und
   "Außenlager" (AUSL).
