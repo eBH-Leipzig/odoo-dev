@@ -1,0 +1,31 @@
+ARG ODOO_VERSION=19.0
+FROM odoo:${ODOO_VERSION}
+
+USER root
+
+# Install system dev tools and packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    python3-pip \
+    python3-dev \
+    build-essential \
+    postgresql-client \
+    nano \
+    vim \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python packages for linting, testing, and debugging
+RUN pip3 install --no-cache-dir --break-system-packages \
+    debugpy \
+    ipdb \
+    pylint \
+    pylint-odoo \
+    flake8 \
+    black \
+    coverage \
+    pytest
+
+ENV PYTHONUNBUFFERED=1
+
+USER odoo

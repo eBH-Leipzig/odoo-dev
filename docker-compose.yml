@@ -1,19 +1,27 @@
 services:
   web:
     container_name: odoo-web-dev
-    image: odoo:${ODOO_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        ODOO_VERSION: ${ODOO_VERSION:-19.0}
     depends_on:
       - db
     ports:
       - "8069:8069"
+      - "8072:8072"
+      - "5678:5678"
     environment:
       - HOST=db
       - USER=${DB_USER}
       - PASSWORD=${DB_PASSWORD}
+    command: odoo --dev=xml,reload,qweb,sql,werkzeug
     volumes:
       - odoo-web-data:/var/lib/odoo
       - ./custom_addons:/mnt/extra-addons
-    restart: always
+      - ./odoo_core:/opt/odoo/odoo_core:ro
+    restart: unless-stopped
 
   db:
     container_name: odoo-db-dev
@@ -25,7 +33,7 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - odoo-db-data:/var/lib/postgresql/data/pgdata
-    restart: always
+    restart: unless-stopped
 
 volumes:
   odoo-web-data:

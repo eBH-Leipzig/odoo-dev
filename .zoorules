@@ -5,12 +5,16 @@ Wir entwickeln Custom-Module für ein Fahrrad- und E-Bike-Einzelhandelsunternehm
 Das System dient als Warenwirtschaft (WaWi), Kasse (POS), Werkstattverwaltung und Lager für Fahrräder, E-Bikes, Teile und Zubehör.
 
 ## 2. Technische Umgebung & Stack
-- **System:** Odoo Community Edition (Laufend in Docker auf Hostinger VPS)
+- **System:** Odoo Community Edition (Laufend in Docker auf Hostinger VPS sowie lokaler Docker Dev-Container)
 - **Version:** Definiert in `.env` (`ODOO_VERSION=19.0`)
 - **Datenbank:** PostgreSQL 16
+- **Lokale Dev-Umgebung (`docker-compose.yml`, `Dockerfile.dev`):**
+  - Dev-Container mit vorinstallierten Tools: `debugpy`, `ipdb`, `pylint-odoo`, `flake8`, `black`, `coverage`, `pytest`.
+  - Exponierte Ports: `8069` (Web UI), `8072` (Longpolling), `5678` (Remote Debugging).
+  - Odoo läuft im Live-Reload Dev-Modus (`--dev=xml,reload,qweb,sql,werkzeug`). Änderungen in `custom_addons/` werden direkt übernommen.
 - **Verzeichnisstruktur:**
   - `custom_addons/`: Alle eigenen Custom-Module liegen hier (in Docker gemountet nach `/mnt/extra-addons`).
-  - `odoo_core/`: Lokaler Read-Only-Referenzcode des Odoo-Core (wird von Git ignoriert).
+  - `odoo_core/`: Lokaler Read-Only-Referenzcode des Odoo-Core (in Docker gemountet nach `/opt/odoo/odoo_core:ro`, wird von Git ignoriert).
 - **Automatisches Deployment:** Jeder Push auf den Branch `main` triggert eine GitHub Action (`.github/workflows/deploy.yml`), die den Server aktualisiert und den Odoo-Container neu startet.
 
 ## 3. Odoo Core Referenz (odoo_core/) & Auto-Download
@@ -42,9 +46,21 @@ Das System dient als Warenwirtschaft (WaWi), Kasse (POS), Werkstattverwaltung un
 - **Leasing:** In Deutschland relevant: Dienstrad-Leasing (JobRad, Bikeleasing, BusinessBike). Verkaufsaufträge und Rechnungen müssen Leasing-Referenzen unterstützen.
 - **Werkstatt:** Service- und Inspektionsaufträge benötigen Checklisten und Status-Tracking.
 
-## 6. Arbeitsweise von Zoo Code
+## 6. Lokale Dev-Container Nutzung & Testausführung
+- **Befehlsausführung im Container:** Wenn der lokale Docker-Dev-Container läuft, kann der Agent Modultests, Syntax- und Qualitätsprüfungen direkt im Container ausführen:
+  - Modultests: `docker compose exec web odoo -d postgres --test-enable --stop-after-init -i <modul_name>`
+  - Tag-spezifische Tests: `docker compose exec web odoo -d postgres --test-tags /<modul_name> --stop-after-init`
+  - Linter: `docker compose exec web flake8 /mnt/extra-addons/<modul_name>`
+  - Odoo-spezifisches Pylint: `docker compose exec web pylint --load-plugins=pylint_odoo /mnt/extra-addons/<modul_name>`
+  - Code-Formatierung prüfen: `docker compose exec web black --check /mnt/extra-addons/<modul_name>`
+- **Live-Reloading & Vorschau vor Commit:** Durch die Volume-Mounts (`./custom_addons:/mnt/extra-addons`) und den Dev-Modus (`--dev=xml,reload,qweb,sql,werkzeug`) werden Änderungen in `custom_addons/` direkt im Container wirksam. Neue Ansichten und Logiken können somit sofort lokal unter `http://localhost:8069` im Web-Browser betrachtet und getestet werden, **bevor** ein Git-Commit erfolgt.
+- **Benutzerhandbuch:** Für nicht-technische Teammitglieder (z. B. Wolfgang) dient [`USER_GUIDE.md`](USER_GUIDE.md) als verständliche Anleitung zur Bedienung der lokalen Umgebung.
+
+## 7. Arbeitsweise von Zoo Code
 - Wenn du eine Aufgabe erledigt und die Dateien geschrieben hast:
   1. Überprüfe die Syntax und Konsistenz aller `__manifest__.py` und `__init__.py`.
   2. Stelle sicher, dass automatisierte Tests in `tests/` vorhanden sind.
-  3. Führe im Terminal `git add .`, `git commit -m "..."` und `git push origin main` aus, damit das Deployment auf den Hostinger-Server automatisch startet.
-  4. Erkläre dem Nutzer kurz, welches Modul in Odoo unter "Apps" aktualisiert bzw. installiert werden muss.
+  3. Führe die Tests und Qualitätsprüfungen im lokalen Docker-Container aus, sofern dieser aktiv ist.
+  4. Informiere den Nutzer, dass die Änderungen lokal unter `http://localhost:8069` im Browser getestet werden können, bevor sie festgeschrieben werden (siehe [`USER_GUIDE.md`](USER_GUIDE.md)).
+  5. Führe im Terminal `git add .`, `git commit -m "..."` und `git push origin main` aus, damit das Deployment auf den Hostinger-Server automatisch startet.
+  6. Erkläre dem Nutzer kurz, welches Modul in Odoo unter "Apps" aktualisiert bzw. installiert werden muss.
