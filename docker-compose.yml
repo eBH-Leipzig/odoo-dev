@@ -11,7 +11,7 @@ services:
     ports:
       - "8069:8069"
       - "8072:8072"
-      - "5678:5678"
+      - "${DEBUGPY_PORT:-5679}:5678"
     environment:
       - HOST=db
       - USER=${DB_USER}
