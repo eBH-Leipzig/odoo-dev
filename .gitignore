@@ -13,6 +13,7 @@ venv/
 
 # Environment files
 .env
+.build.log
 
 # OS specific files
 .DS_Store
