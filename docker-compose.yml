@@ -16,7 +16,7 @@ services:
       - HOST=db
       - USER=${DB_USER}
       - PASSWORD=${DB_PASSWORD}
-    command: odoo --dev=xml,reload,qweb,sql,werkzeug
+    command: odoo --dev=xml,reload,qweb,sql,werkzeug --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
     volumes:
       - odoo-web-data:/var/lib/odoo
       - ./custom_addons:/mnt/extra-addons
