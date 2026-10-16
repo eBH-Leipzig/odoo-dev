@@ -15,7 +15,7 @@ Das System dient als Warenwirtschaft (WaWi), Kasse (POS), Werkstattverwaltung un
 - **Verzeichnisstruktur:**
   - `custom_addons/`: Alle eigenen Custom-Module liegen hier (in Docker gemountet nach `/mnt/extra-addons`).
   - `odoo_core/`: Lokaler Read-Only-Referenzcode des Odoo-Core (in Docker gemountet nach `/opt/odoo/odoo_core:ro`, wird von Git ignoriert).
-- **Automatisches Deployment:** Jeder Push auf den Branch `main` triggert eine GitHub Action (`.github/workflows/deploy.yml`), die den Server aktualisiert und den Odoo-Container neu startet.
+- **Automatisches Deployment:** Multi-Environment CI/CD via GitHub Actions (`.github/workflows/deploy.yml`). Ein Push auf den Branch `dev` aktualisiert die DEV-Instanz auf dem Server. Ein Merge/Push auf `main` aktualisiert die PROD-Instanz.
 
 ## 3. Odoo Core Referenz (odoo_core/) & Auto-Download
 - **Speicherort des Core-Codes:** Liegt im Workspace-Ordner `odoo_core/` (z. B. `odoo_core/addons/` für Standardmodule wie `sale`, `product`, `stock`).
@@ -62,5 +62,6 @@ Das System dient als Warenwirtschaft (WaWi), Kasse (POS), Werkstattverwaltung un
   2. Stelle sicher, dass automatisierte Tests in `tests/` vorhanden sind.
   3. Führe die Tests und Qualitätsprüfungen im lokalen Docker-Container aus, sofern dieser aktiv ist.
   4. Informiere den Nutzer, dass die Änderungen lokal unter `http://localhost:8069` im Browser getestet werden können, bevor sie festgeschrieben werden (siehe [`USER_GUIDE.md`](USER_GUIDE.md)).
-  5. Führe im Terminal `git add .`, `git commit -m "..."` und `git push origin main` aus, damit das Deployment auf den Hostinger-Server automatisch startet.
-  6. Erkläre dem Nutzer kurz, welches Modul in Odoo unter "Apps" aktualisiert bzw. installiert werden muss.
+  5. Führe im Terminal `git add .`, `git commit -m "..."` und `git push origin dev` aus, damit das Deployment in die Testumgebung (`odoo-dev`) auf den Server automatisch startet.
+  6. Erkläre dem Nutzer kurz, welches Modul in Odoo unter "Apps" auf `odoo-dev.ebike-haus.de` aktualisiert bzw. installiert werden muss.
+  7. Nach Freigabe durch den Nutzer öffne einen Pull Request von `dev` nach `main` oder führe einen Merge aus, um das Feature in die Produktion (`odoo.ebike-haus.de`) zu überführen.
