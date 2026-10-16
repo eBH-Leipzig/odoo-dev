@@ -14,8 +14,8 @@ jobs:
         if: github.ref == 'refs/heads/dev'
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST_IP }}
-          username: ${{ secrets.SSH_USER }}
+          host: ${{ vars.HOST_IP }}
+          username: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /opt/odoo-deploy  # Assuming this is your deployment folder on the server
@@ -29,8 +29,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST_IP }}
-          username: ${{ secrets.SSH_USER }}
+          host: ${{ vars.HOST_IP }}
+          username: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /opt/odoo-deploy  # Assuming this is your deployment folder on the server
