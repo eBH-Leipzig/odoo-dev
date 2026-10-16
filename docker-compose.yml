@@ -1,5 +1,48 @@
 services:
-  web:
+  # --- PRODUCTION ENVIRONMENT ---
+  web-prod:
+    container_name: odoo-web-prod
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        ODOO_VERSION: ${ODOO_VERSION:-19.0}
+    depends_on:
+      - db-prod
+    environment:
+      - HOST=db-prod
+      - USER=${DB_USER_PROD:-odoo}
+      - PASSWORD=${DB_PASSWORD_PROD:-odoopass}
+    command: odoo --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons -d prod_db
+    volumes:
+      - odoo-web-data-prod:/var/lib/odoo
+      - ./custom_addons:/mnt/extra-addons
+    networks:
+      - default
+      - root_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.odoo-prod.rule=Host(`odoo.ebike-haus.de`)"
+      - "traefik.http.routers.odoo-prod.entrypoints=websecure"
+      - "traefik.http.routers.odoo-prod.tls.certresolver=mytlschallenge"
+      - "traefik.http.services.odoo-prod.loadbalancer.server.port=8069"
+      - "traefik.docker.network=root_default"
+    restart: unless-stopped
+
+  db-prod:
+    container_name: odoo-db-prod
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB_PROD:-prod_db}
+      - POSTGRES_USER=${DB_USER_PROD:-odoo}
+      - POSTGRES_PASSWORD=${DB_PASSWORD_PROD:-odoopass}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-db-data-prod:/var/lib/postgresql/data/pgdata
+    restart: unless-stopped
+
+  # --- DEVELOPMENT ENVIRONMENT ---
+  web-dev:
     container_name: odoo-web-dev
     build:
       context: .
@@ -7,34 +50,45 @@ services:
       args:
         ODOO_VERSION: ${ODOO_VERSION:-19.0}
     depends_on:
-      - db
-    ports:
-      - "8069:8069"
-      - "8072:8072"
-      - "${DEBUGPY_PORT:-5679}:5678"
+      - db-dev
     environment:
-      - HOST=db
-      - USER=${DB_USER}
-      - PASSWORD=${DB_PASSWORD}
-    command: odoo --dev=xml,reload,qweb,sql,werkzeug --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
+      - HOST=db-dev
+      - USER=${DB_USER_DEV:-odoo}
+      - PASSWORD=${DB_PASSWORD_DEV:-odoopass}
+    command: odoo --dev=xml,reload,qweb,sql,werkzeug --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons -d dev_db
     volumes:
-      - odoo-web-data:/var/lib/odoo
+      - odoo-web-data-dev:/var/lib/odoo
       - ./custom_addons:/mnt/extra-addons
-      - ./odoo_core:/opt/odoo/odoo_core:ro
+    networks:
+      - default
+      - root_default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.odoo-dev.rule=Host(`odoo-dev.ebike-haus.de`)"
+      - "traefik.http.routers.odoo-dev.entrypoints=websecure"
+      - "traefik.http.routers.odoo-dev.tls.certresolver=mytlschallenge"
+      - "traefik.http.services.odoo-dev.loadbalancer.server.port=8069"
+      - "traefik.docker.network=root_default"
     restart: unless-stopped
 
-  db:
+  db-dev:
     container_name: odoo-db-dev
     image: postgres:16
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB_DEV:-dev_db}
+      - POSTGRES_USER=${DB_USER_DEV:-odoo}
+      - POSTGRES_PASSWORD=${DB_PASSWORD_DEV:-odoopass}
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
-      - odoo-db-data:/var/lib/postgresql/data/pgdata
+      - odoo-db-data-dev:/var/lib/postgresql/data/pgdata
     restart: unless-stopped
 
 volumes:
-  odoo-web-data:
-  odoo-db-data:
+  odoo-web-data-prod:
+  odoo-db-data-prod:
+  odoo-web-data-dev:
+  odoo-db-data-dev:
+
+networks:
+  root_default:
+    external: true
