@@ -1,6 +1,6 @@
 services:
   # --- PRODUCTION ENVIRONMENT ---
-  web-prod:
+  odoo-prod:
     container_name: odoo-web-prod
     build:
       context: .
@@ -8,9 +8,9 @@ services:
       args:
         ODOO_VERSION: ${ODOO_VERSION:-19.0}
     depends_on:
-      - db-prod
+      - odoo-db-prod
     environment:
-      - HOST=db-prod
+      - HOST=odoo-db-prod
       - USER=${DB_USER_PROD:-odoo}
       - PASSWORD=${DB_PASSWORD_PROD:-odoopass}
     command: odoo --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons -d prod_db
@@ -29,7 +29,7 @@ services:
       - "traefik.docker.network=root_default"
     restart: unless-stopped
 
-  db-prod:
+  odoo-db-prod:
     container_name: odoo-db-prod
     image: postgres:16
     environment:
@@ -42,7 +42,7 @@ services:
     restart: unless-stopped
 
   # --- DEVELOPMENT ENVIRONMENT ---
-  web-dev:
+  odoo-dev:
     container_name: odoo-web-dev
     build:
       context: .
@@ -50,9 +50,9 @@ services:
       args:
         ODOO_VERSION: ${ODOO_VERSION:-19.0}
     depends_on:
-      - db-dev
+      - odoo-db-dev
     environment:
-      - HOST=db-dev
+      - HOST=odoo-db-dev
       - USER=${DB_USER_DEV:-odoo}
       - PASSWORD=${DB_PASSWORD_DEV:-odoopass}
     command: odoo --dev=xml,reload,qweb,sql,werkzeug --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons -d dev_db
@@ -71,7 +71,7 @@ services:
       - "traefik.docker.network=root_default"
     restart: unless-stopped
 
-  db-dev:
+  odoo-db-dev:
     container_name: odoo-db-dev
     image: postgres:16
     environment:

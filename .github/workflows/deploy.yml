@@ -21,9 +21,9 @@ jobs:
             cd /docker/odoo-dev
             git fetch origin dev
             git reset --hard origin/dev
-            docker compose pull
-            docker compose up -d web-dev db-dev
-            docker compose restart web-dev
+            docker compose pull odoo-dev odoo-db-dev
+            docker compose up -d odoo-dev odoo-db-dev
+            docker compose restart odoo-dev
 
       - name: Deploy to PROD
         if: github.ref == 'refs/heads/main'
@@ -36,6 +36,6 @@ jobs:
             cd /docker/odoo-dev
             git fetch origin main
             git reset --hard origin/main
-            docker compose pull
-            docker compose up -d web-prod db-prod
-            docker compose restart web-prod
+            docker compose pull odoo-prod odoo-db-prod
+            docker compose up -d odoo-prod odoo-db-prod
+            docker compose restart odoo-prod
