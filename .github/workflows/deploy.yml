@@ -18,7 +18,7 @@ jobs:
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /opt/odoo-deploy  # Assuming this is your deployment folder on the server
+            cd /docker/odoo-dev
             git fetch origin dev
             git reset --hard origin/dev
             docker compose pull
@@ -33,7 +33,7 @@ jobs:
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /opt/odoo-deploy  # Assuming this is your deployment folder on the server
+            cd /docker/odoo-dev
             git fetch origin main
             git reset --hard origin/main
             docker compose pull
