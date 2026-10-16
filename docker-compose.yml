@@ -13,7 +13,7 @@ services:
       - HOST=odoo-db-prod
       - USER=${DB_USER_PROD:-odoo}
       - PASSWORD=${DB_PASSWORD_PROD:-odoopass}
-    command: odoo --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons -d prod_db
+    command: odoo --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons -d prod_db -i base
     volumes:
       - odoo-web-data-prod:/var/lib/odoo
       - ./custom_addons:/mnt/extra-addons
@@ -55,7 +55,7 @@ services:
       - HOST=odoo-db-dev
       - USER=${DB_USER_DEV:-odoo}
       - PASSWORD=${DB_PASSWORD_DEV:-odoopass}
-    command: odoo --dev=xml,reload,qweb,sql,werkzeug --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons -d dev_db
+    command: odoo --dev=xml,reload,qweb,sql,werkzeug --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons -d dev_db -i base
     volumes:
       - odoo-web-data-dev:/var/lib/odoo
       - ./custom_addons:/mnt/extra-addons
