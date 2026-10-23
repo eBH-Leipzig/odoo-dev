@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Discuss app menu entry for staff triage -->
+    <menuitem
+        id="menu_ebh_unassigned_mail_discuss"
+        name="Unzugeordnete Mails"
+        parent="mail.menu_root_discuss"
+        action="action_ebh_unassigned_mail"
+        sequence="30"/>
+
+    <!-- Settings > Technical > Email menu entry for administrators -->
+    <menuitem
+        id="menu_ebh_unassigned_mail_technical"
+        name="Unzugeordnete Mails"
+        parent="base.menu_email"
+        action="action_ebh_unassigned_mail"
+        sequence="50"/>
+</odoo>

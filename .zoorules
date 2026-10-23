@@ -40,6 +40,9 @@ Das System dient als Warenwirtschaft (WaWi), Kasse (POS), Werkstattverwaltung un
    - `models/` und `views/`
    - `security/ir.model.access.csv` (falls neue Modelle angelegt werden!)
    - `tests/` mit automatisierten Unit-Tests (Zero-Bug-Policy)
+5. **Odoo Mail Engine & Notification Safety (`mail.thread`):**
+   - Beim Verknüpfen weitergeleiteter E-Mails oder externer Nachrichten im Chatter (`mail.thread`) niemals externe Kunden-Partner-IDs in `message_dict['partner_ids']` übergeben: Odoo interpretiert diese als externe Empfänger und versendet ungewollte ausgehende Benachrichtigungen.
+   - Den externen Kunden stattdessen ausschließlich als Autor (`author_id`) oder im Chatter-Nachrichtentext bzw. den Metadaten vermerken.
 
 ## 5. Fachliche Domänen-Logik (Fahrradhandel)
 - **Fahrräder & E-Bikes:** Werden über `stock.lot` (Seriennummern) verwaltet. Wichtige Attribute: Rahmennummer, Rahmenhöhe, Akkukapazität (Wh), Motortyp (Bosch, Shimano etc.), Schlüsselnummer.
@@ -47,20 +50,40 @@ Das System dient als Warenwirtschaft (WaWi), Kasse (POS), Werkstattverwaltung un
 - **Werkstatt:** Service- und Inspektionsaufträge benötigen Checklisten und Status-Tracking.
 
 ## 6. Lokale Dev-Container Nutzung & Testausführung
-- **Befehlsausführung im Container:** Wenn der lokale Docker-Dev-Container läuft, kann der Agent Modultests, Syntax- und Qualitätsprüfungen direkt im Container ausführen:
-  - Modultests: `docker compose exec web odoo -d postgres --test-enable --stop-after-init -i <modul_name>`
-  - Tag-spezifische Tests: `docker compose exec web odoo -d postgres --test-tags /<modul_name> --stop-after-init`
-  - Linter: `docker compose exec web flake8 /mnt/extra-addons/<modul_name>`
-  - Odoo-spezifisches Pylint: `docker compose exec web pylint --load-plugins=pylint_odoo /mnt/extra-addons/<modul_name>`
-  - Code-Formatierung prüfen: `docker compose exec web black --check /mnt/extra-addons/<modul_name>`
+- **Befehlsausführung im Container:** Wenn der lokale Docker-Dev-Container läuft, führt der Agent Modultests, Syntax- und Qualitätsprüfungen direkt im `odoo-dev`-Container aus:
+  - Modultests (Port 8070 gegen Port-Kollisionen):
+    ```bash
+    docker compose exec odoo-dev odoo --test-enable --stop-after-init -u <addon_name> -d dev_db --db_host=odoo-db-dev -r odoo -w odoopass --http-port=8070
+    ```
+  - Pre-Review Compound Check (Lint & Format vor Review):
+    ```bash
+    docker compose exec odoo-dev bash -c "black --check /mnt/extra-addons/<addon> && flake8 --config=/mnt/extra-addons/.flake8 /mnt/extra-addons/<addon>"
+    ```
+  - Tag-spezifische Tests:
+    ```bash
+    docker compose exec odoo-dev odoo --test-tags /<addon_name> --stop-after-init -d dev_db --db_host=odoo-db-dev -r odoo -w odoopass --http-port=8070
+    ```
+  - Linter einzeln ausführen:
+    ```bash
+    docker compose exec odoo-dev flake8 --config=/mnt/extra-addons/.flake8 /mnt/extra-addons/<modul_name>
+    docker compose exec odoo-dev pylint --load-plugins=pylint_odoo /mnt/extra-addons/<modul_name>
+    docker compose exec odoo-dev black --check /mnt/extra-addons/<modul_name>
+    ```
 - **Live-Reloading & Vorschau vor Commit:** Durch die Volume-Mounts (`./custom_addons:/mnt/extra-addons`) und den Dev-Modus (`--dev=xml,reload,qweb,sql,werkzeug`) werden Änderungen in `custom_addons/` direkt im Container wirksam. Neue Ansichten und Logiken können somit sofort lokal unter `http://localhost:8069` im Web-Browser betrachtet und getestet werden, **bevor** ein Git-Commit erfolgt.
 - **Benutzerhandbuch:** Für nicht-technische Teammitglieder (z. B. Wolfgang) dient [`USER_GUIDE.md`](USER_GUIDE.md) als verständliche Anleitung zur Bedienung der lokalen Umgebung.
 
-## 7. Arbeitsweise von Zoo Code
+## 7. Arbeitsweise & Navigation von Zoo Code
+- **Navigation Steering & Kontext-Effizienz:**
+  - Nutze `.scratch/<feature>/issues/`-Tickets und `docs/adr/` als verbindliche Single Sources of Truth für Spezifikationen und Architekturentscheidungen.
+  - Lies niemals massive rohe Planungsdateien (`plans/*.txt`) wiederholt in voller Länge ein; orientiere dich stattdessen gezielt an den atomaren Tickets und ADRs.
 - Wenn du eine Aufgabe erledigt und die Dateien geschrieben hast:
   1. Überprüfe die Syntax und Konsistenz aller `__manifest__.py` und `__init__.py`.
   2. Stelle sicher, dass automatisierte Tests in `tests/` vorhanden sind.
-  3. Führe die Tests und Qualitätsprüfungen im lokalen Docker-Container aus, sofern dieser aktiv ist.
+  3. Führe den Pre-Review Compound Check und die Modultests im lokalen Container aus:
+     ```bash
+     docker compose exec odoo-dev bash -c "black --check /mnt/extra-addons/<addon> && flake8 --config=/mnt/extra-addons/.flake8 /mnt/extra-addons/<addon>"
+     docker compose exec odoo-dev odoo --test-enable --stop-after-init -u <addon_name> -d dev_db --db_host=odoo-db-dev -r odoo -w odoopass --http-port=8070
+     ```
   4. Informiere den Nutzer, dass die Änderungen lokal unter `http://localhost:8069` im Browser getestet werden können, bevor sie festgeschrieben werden (siehe [`USER_GUIDE.md`](USER_GUIDE.md)).
   5. Führe im Terminal `git add .`, `git commit -m "..."` und `git push origin dev` aus, damit das Deployment in die Testumgebung (`odoo-dev`) auf den Server automatisch startet.
   6. Erkläre dem Nutzer kurz, welches Modul in Odoo unter "Apps" auf `odoo-dev.ebike-haus.de` aktualisiert bzw. installiert werden muss.

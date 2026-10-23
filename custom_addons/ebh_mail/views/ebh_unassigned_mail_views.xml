@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ebh_unassigned_mail_tree" model="ir.ui.view">
+        <field name="name">ebh.unassigned.mail.list</field>
+        <field name="model">ebh.unassigned.mail</field>
+        <field name="arch" type="xml">
+            <list string="Unzugeordnete Mails" decoration-info="state == 'draft'" decoration-success="state == 'assigned'" decoration-muted="state == 'forwarded'">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="email_from"/>
+                <field name="email_to"/>
+                <field name="target_reference" optional="show"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'assigned'" decoration-muted="state == 'forwarded'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ebh_unassigned_mail_form" model="ir.ui.view">
+        <field name="name">ebh.unassigned.mail.form</field>
+        <field name="model">ebh.unassigned.mail</field>
+        <field name="arch" type="xml">
+            <form string="Unzugeordnete Mail">
+                <header>
+                    <button name="action_assign_to_record" string="Zuordnen" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_forward_to_company" string="Weiterleiten" type="object" invisible="state != 'draft'"/>
+                    <button name="action_set_draft" string="Auf Entwurf zurücksetzen" type="object" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,assigned,forwarded"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Betreff"/>
+                        <h1>
+                            <field name="name" readonly="state != 'draft'"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="E-Mail-Details">
+                            <field name="email_from" readonly="state != 'draft'"/>
+                            <field name="email_to" readonly="state != 'draft'"/>
+                            <field name="date" readonly="state != 'draft'"/>
+                            <field name="message_id" readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Zuordnung">
+                            <field name="target_reference" widget="reference" readonly="state != 'draft'"/>
+                            <field name="res_model" invisible="1"/>
+                            <field name="res_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Nachrichteninhalt">
+                            <field name="body_html" widget="html" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ebh_unassigned_mail_search" model="ir.ui.view">
+        <field name="name">ebh.unassigned.mail.search</field>
+        <field name="model">ebh.unassigned.mail</field>
+        <field name="arch" type="xml">
+            <search string="Unzugeordnete Mails suchen">
+                <field name="name" string="Betreff"/>
+                <field name="email_from" string="Absender"/>
+                <field name="email_to" string="Empfänger"/>
+                <filter string="Nicht zugeordnet (Entwurf)" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Zugeordnet" name="filter_assigned" domain="[('state', '=', 'assigned')]"/>
+                <filter string="Weitergeleitet" name="filter_forwarded" domain="[('state', '=', 'forwarded')]"/>
+                <separator/>
+                <group name="group_by">
+                    <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
+                    <filter string="Datum" name="group_by_date" context="{'group_by': 'date:day'}"/>
+                    <filter string="Absender" name="group_by_from" context="{'group_by': 'email_from'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ebh_unassigned_mail" model="ir.actions.act_window">
+        <field name="name">Unzugeordnete Mails</field>
+        <field name="res_model">ebh.unassigned.mail</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ebh_unassigned_mail_search"/>
+        <field name="context">{'search_default_filter_draft': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Keine unzugeordneten E-Mails vorhanden!
+            </p>
+            <p>
+                Eingehende E-Mails, die keinem Auftrag oder Beleg zugeordnet werden konnten, erscheinen hier zur manuellen Sichtung.
+            </p>
+        </field>
+    </record>
+</odoo>

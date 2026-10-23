@@ -30,6 +30,9 @@
   - Verwende niemals rohe SQL-Befehle, sondern immer das Odoo-ORM (`self.env[...]`).
 - **Versions-Konvention im Manifest:**
   - In `custom_addons/<module>/__manifest__.py` muss die Version mit der Odoo-Version beginnen (z. B. `'version': '19.0.1.0.0'`).
+- **Odoo Mail Engine & Notification Safety (`mail.thread`):**
+  - Beim Verknüpfen weitergeleiteter E-Mails oder externer Nachrichten im Chatter (`mail.thread`) niemals externe Kunden-Partner-IDs in `message_dict['partner_ids']` übergeben: Odoo behandelt diese als externe Empfänger und versendet ungewollte ausgehende Benachrichtigungen.
+  - Den externen Kunden stattdessen ausschließlich als Autor (`author_id`) oder im Chatter-Nachrichtentext bzw. Metadaten vermerken.
 
 ## 4. OBLIGATORISCHES TESTING (Zero-Bug-Policy)
 Jedes erstellte Modul MUSS automatisierte Tests enthalten!
@@ -49,7 +52,7 @@ Für die lokale Entwicklung und das Ausführen von Tests steht ein dedizierter D
   ```
 - **Container-Logs einsehen:**
   ```bash
-  docker compose logs -f web
+  docker compose logs -f odoo-dev
   ```
 - **Dev-Container stoppen:**
   ```bash
@@ -64,20 +67,28 @@ Für die lokale Entwicklung und das Ausführen von Tests steht ein dedizierter D
 - **Benutzerhandbuch für Einsteiger:** Eine verständliche Schritt-für-Schritt-Anleitung für nicht-technische Anwender ist in [`USER_GUIDE.md`](USER_GUIDE.md) hinterlegt.
 
 ### Tests & Linter im Dev-Container ausführen
-Tests und Code-Quality-Prüfungen werden direkt im Odoo-Container ausgeführt:
-- **Modultests ausführen (Pflicht vor jedem Commit):**
+Tests und Code-Quality-Prüfungen werden direkt im `odoo-dev`-Container ausgeführt:
+- **Pre-Commit Hooks ausführen (Formatierung & Linting vor Commit):**
   ```bash
-  docker compose exec web odoo -d postgres --test-enable --stop-after-init -i <modul_name>
+  pre-commit run --all-files
+  ```
+- **Modultests ausführen (Pflicht vor jedem Commit, Port 8070 gegen Port-Kollisionen):**
+  ```bash
+  docker compose exec odoo-dev odoo --test-enable --stop-after-init -u <addon_name> -d dev_db --db_host=odoo-db-dev -r odoo -w odoopass --http-port=8070
+  ```
+- **Pre-Review Lint & Format Compound Check (vor Code-Review):**
+  ```bash
+  docker compose exec odoo-dev bash -c "black --check /mnt/extra-addons/<addon> && flake8 --config=/mnt/extra-addons/.flake8 /mnt/extra-addons/<addon>"
   ```
 - **Spezifische Test-Tags ausführen:**
   ```bash
-  docker compose exec web odoo -d postgres --test-tags /<modul_name> --stop-after-init
+  docker compose exec odoo-dev odoo --test-tags /<addon_name> --stop-after-init -d dev_db --db_host=odoo-db-dev -r odoo -w odoopass --http-port=8070
   ```
-- **Code-Qualität & Linting prüfen:**
+- **Code-Qualität & Linting einzeln prüfen:**
   ```bash
-  docker compose exec web flake8 /mnt/extra-addons/<modul_name>
-  docker compose exec web pylint --load-plugins=pylint_odoo /mnt/extra-addons/<modul_name>
-  docker compose exec web black --check /mnt/extra-addons/<modul_name>
+  docker compose exec odoo-dev flake8 --config=/mnt/extra-addons/.flake8 /mnt/extra-addons/<addon>
+  docker compose exec odoo-dev pylint --load-plugins=pylint_odoo /mnt/extra-addons/<addon>
+  docker compose exec odoo-dev black --check /mnt/extra-addons/<addon>
   ```
 
 ## 6. Externe Anbindungen & API-Freundlichkeit
@@ -96,11 +107,16 @@ Tests und Code-Quality-Prüfungen werden direkt im Odoo-Container ausgeführt:
 - Externe Python-Pakete können in einer `requirements.txt` erfasst werden.
 
 ## 8. Workflow-Abschluss
+- **Navigation Steering & Kontext-Effizienz:** Nutze `.scratch/<feature>/issues/`-Tickets und `docs/adr/` als Single Sources of Truth für Spezifikationen und Architekturentscheidungen, anstatt wiederholt massive rohe Planungsdateien (`plans/*.txt`) vollständig einzulesen.
 Wenn du eine Aufgabe bearbeitest:
 1. Schreibe den Code nach OCA-Standard in `custom_addons/`.
 2. Schreibe die Unit-Tests in `tests/`.
 3. Validiere Manifest und XML-Syntax.
-4. Führe die Tests und Linter im lokalen Docker-Container aus (`docker compose exec web odoo -d postgres --test-enable --stop-after-init -i <modul_name>`).
+4. Führe den Pre-Review Compound Check und die Modultests im lokalen Container aus:
+   ```bash
+   docker compose exec odoo-dev bash -c "black --check /mnt/extra-addons/<addon> && flake8 --config=/mnt/extra-addons/.flake8 /mnt/extra-addons/<addon>"
+   docker compose exec odoo-dev odoo --test-enable --stop-after-init -u <addon_name> -d dev_db --db_host=odoo-db-dev -r odoo -w odoopass --http-port=8070
+   ```
 5. **Lokale Live-Prüfung ermöglichen:** Informiere den Nutzer, dass das Feature lokal unter `http://localhost:8069` im Browser bereitsteht und geprüft werden kann (Details siehe [`USER_GUIDE.md`](USER_GUIDE.md)), bevor der Code festgeschrieben wird.
 6. Führe im Terminal aus, um den Code zunächst in die **DEV-Umgebung** zu deployen:
    ```bash

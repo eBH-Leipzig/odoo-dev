@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ebh_unassigned_mail_system,ebh.unassigned.mail.system,model_ebh_unassigned_mail,base.group_system,1,1,1,1
+access_ebh_unassigned_mail_manager,ebh.unassigned.mail.manager,model_ebh_unassigned_mail,base.group_erp_manager,1,1,1,1
+access_ebh_unassigned_mail_user,ebh.unassigned.mail.user,model_ebh_unassigned_mail,base.group_user,1,1,0,0
