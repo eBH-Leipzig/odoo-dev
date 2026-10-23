@@ -33,6 +33,9 @@ Rechnungsstellung, l10n_de sowie `ebh_base` (19.0.1.0.1, SKR04 geladen, Firmenda
 | [TEST] | Testdaten Artikelnummer | 3 Testartikel + Testattribut angelegt und wieder gelöscht; Zähler auf 56263 zurückgesetzt |
 | [EINST] | Werbesperre | Felder `x_keine_werbung` (Ja/Nein, protokolliert) und `x_keine_werbung_grund` (Widerspruch des Kunden / Interne Entscheidung, protokolliert); Ansicht `res.partner.form.ebh.werbesperre` (unter Stichwörter, Grund nur sichtbar und Pflicht bei Sperre) |
 | [EINST] | Benachrichtigungen | Benutzer `admin`: „in Odoo“ statt per Mail |
+| [EINST] | Artikelnummer | Startwert auf Wunsch von eBH auf **57000** gesetzt (Puffer für neue Cycly-Nummern bis zum Umzug) |
+| [EINST] | EU-Steuerzuordnung | „Geschäftspartner EU (mit USt-ID)“: „USt-ID erforderlich“ eingeschaltet. Getestet: NL-Privatkunde → keine Zuordnung (deutsche USt), NL-Firma mit USt-ID → EU, DE-Kunde → Inland |
+| [TEST] | Testdaten EU-Regel | 3 Testkontakte und 3 Angebotsentwürfe angelegt und gelöscht (Angebotsnummern S00001–S00003 dadurch verbraucht, unkritisch) |
 
 Hinweis: Während der Arbeit war DEV etwa eine Minute nicht erreichbar (502/500), ohne Deployment.
 Danach waren alle Daten unverändert vorhanden. Ursache unbekannt → ITler.

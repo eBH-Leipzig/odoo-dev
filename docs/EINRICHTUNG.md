@@ -28,7 +28,7 @@ Status: `[ ]` offen · `[x]` erledigt · `[~]` teilweise / mit Anmerkung
 | Währung EUR, Standard-Preisliste auf EUR | [x] | [ ] |
 | Kontenrahmen **SKR04** (`de_skr04`, laut Cycly-Kontenplan). PROD: vorher mit Collmex und Steuerberater abgleichen | [x] | [ ] |
 | Preise: Firmeneinstellung „inklusive Steuer“; an jeder Einkaufssteuer „exklusive“ (Einkauf netto) | [x] | [ ] |
-| Steuerzuordnung „Geschäftspartner EU (mit USt-ID)“ prüfen; EU-Lieferanten mit Land und USt-ID anlegen | [~] | [ ] |
+| Steuerzuordnung „Geschäftspartner EU (mit USt-ID)“: **„USt-ID erforderlich“ einschalten**; EU-Lieferanten mit Land und USt-ID anlegen | [x] | [ ] |
 
 ## Einstellungen
 
@@ -56,7 +56,7 @@ Status: `[ ]` offen · `[x]` erledigt · `[~]` teilweise / mit Anmerkung
 | Attribute Farbe, Rahmengröße | [ ] | [ ] |
 | Eigenschaften an der Kategorie Fahrräder (Datenblatt: Spezifikationen, Antrieb, Ausstattung; Liste aus Prototyp `ebh_datenblatt/data/merkmale.xml`) | [ ] | [ ] |
 | Artikel „Freiposition“ (nicht lagergeführt, 19 %, in der Kasse) | [ ] | [ ] |
-| Automatisierungsregel: neuer Artikel ohne Interne Referenz bekommt die nächste Nummer (Start nach höchster Cycly-Nummer) | [x] | [ ] |
+| Automatisierungsregel: neuer Artikel ohne Interne Referenz bekommt die nächste Nummer (Start 57000) | [x] | [ ] |
 
 ## Kontakte
 
@@ -88,20 +88,18 @@ Status: `[ ]` offen · `[x]` erledigt · `[~]` teilweise / mit Anmerkung
 ## Anmerkungen DEV (23.10.2026)
 
 - **Kontenrahmen:** SKR04 war auf DEV schon geladen (über `ebh_base`), 0 Buchungen.
-- **EU-Steuerzuordnung:** „Geschäftspartner EU (mit USt-ID)“ ist im Odoo-Standard automatisch für *alle* EU-Partner aktiv,
-  auch ohne USt-ID („USt-ID erforderlich“ ist aus). Für EU-Lieferanten wie VanMoof passt das. Ein EU-*Privatkunde* bekäme
-  aber ebenfalls die steuerfreie Zuordnung → mit Steuerberater klären, ob „USt-ID erforderlich“ eingeschaltet wird. Nicht geändert.
+- **EU-Steuerzuordnung:** „USt-ID erforderlich“ eingeschaltet. EU-Firmen mit USt-ID → steuerfrei, EU-Privatkunden → deutsche USt.
 - **Wareneingang:** Neue Seriennummern erlaubt und Etikettendruck an; Etikettenformat (Brother QL-810W) folgt.
 - **Fahrradnummer:** Nummernkreis `ebh.fahrrad` (EBH-0001) angelegt. Zuordnung zu Fahrrad-Artikeln, sobald es welche gibt (Phase 4).
-- **Artikelnummer:** Nummernkreis `ebh.artikelnummer` ab **56263** (höchste Cycly-SKU: 56262). Zwei Regeln: eine für Artikel mit
+- **Artikelnummer:** Nummernkreis `ebh.artikelnummer` ab **57000** (höchste Cycly-SKU am 23.10.: 56262, Puffer bis zum Umzug). Zwei Regeln: eine für Artikel mit
   einer Variante, eine für Artikel mit mehreren Varianten. Getestet: ohne Nummer → 56263; mitgegebene Nummer bleibt;
-  Varianten bekommen je eine Nummer. Testdaten gelöscht, Zähler zurück auf 56263.
+  Varianten bekommen je eine Nummer. Testdaten gelöscht, Zähler danach auf 57000 gesetzt.
 - **Kasse:** Journal „Kasse Laden“ (KAS), Konto **1600** wie in Cycly (Odoo hatte 1601 vergeben; in Cycly ist 1601 „Kasse Büro“).
   Zahlart „Karte“ bucht vorerst auf das Bank-Journal; Cycly nutzt dafür 3610 „Transit Kartenzahlung“ → beim Collmex-Abgleich klären.
 - **Rechte:** Im Standard dürfen nur „Administrator“-Rollen (Verkauf/Lager) Artikel, Kategorien und Attribute anlegen. Mitarbeiter
   bekommen deshalb „Benutzer“-Rollen, nicht „Administrator“. Benutzer gibt es noch nicht (nur `admin`, Benachrichtigung „in Odoo“).
 - **Nachschub:** Laden Leipzig wird aus dem Außenlager nachgeschoben (Lager › Nachschub aus „Außenlager“).
-- **Vorgefunden, nicht von Claude:** Artikel „kaffee“ (Testdatum?) und Modul `ebh_mail` (installiert, Code liegt nicht im Repo).
+- **Vorgefunden, nicht von Claude:** Artikel „kaffee“ (Testdatum?) und Modul `ebh_mail` (installiert, Code noch nicht im Repo – ITler arbeitet daran).
 
 ## Zu klären
 
