@@ -1,21 +1,41 @@
-name: Deploy to Hostinger Odoo
+name: Deploy Odoo
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - dev
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: SSH into Hostinger VPS and deploy
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Deploy to DEV
+        if: github.ref == 'refs/heads/dev'
+        uses: appleboy/ssh-action@master
         with:
-          host: 72.61.188.248
-          username: root
+          host: ${{ vars.HOST_IP }}
+          username: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            set -e
             cd /docker/odoo-dev
-            git pull
-            docker compose restart web
+            git fetch origin dev
+            git reset --hard origin/dev
+            docker compose pull odoo-dev odoo-db-dev
+            docker compose up -d --remove-orphans odoo-dev odoo-db-dev
+            docker compose restart odoo-dev
+
+      - name: Deploy to PROD
+        if: github.ref == 'refs/heads/main'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ vars.HOST_IP }}
+          username: ${{ vars.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /docker/odoo-dev
+            git fetch origin main
+            git reset --hard origin/main
+            docker compose pull odoo-prod odoo-db-prod
+            docker compose up -d --remove-orphans odoo-prod odoo-db-prod
+            docker compose restart odoo-prod
