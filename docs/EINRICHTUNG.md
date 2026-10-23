@@ -102,7 +102,7 @@ Status: `[ ]` offen · `[x]` erledigt · `[~]` teilweise / mit Anmerkung
 - **Vorgefunden, nicht von Claude:** Artikel „kaffee“ (Testdatum?) und Modul `ebh_mail` (installiert, Code noch nicht im Repo – ITler arbeitet daran).
 
 - **Datenblatt:** Bei neuen Fahrrad-Artikeln „Kassensystem“ anhaken und die Kassen-Kategorie „Fahrräder“ setzen (Odoo setzt das nicht automatisch).
-- **`ebh_base`:** Außenlager abgekoppelt. Deinstallation wartet, weil `ebh_mail` davon abhängt (ITler).
+- **`ebh_base`:** bleibt installiert (ab 19.0.1.1.0 nur Apps + Einrichtungs-Prüfung, keine Daten). Prüfung per JSON-RPC: `res.company.ebh_get_setup_status()`.
 
 ## Zu klären
 

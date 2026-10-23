@@ -2,8 +2,8 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 {
     "name": "eBH Basis-Einrichtung",
-    "summary": "Basis-Apps und Firmenstammdaten für das eBike-Haus Leipzig",
-    "version": "19.0.1.0.2",
+    "summary": "Basis-Apps und Einrichtungs-Prüfung für das eBike-Haus Leipzig",
+    "version": "19.0.1.1.0",
     "category": "Hidden/Tools",
     "author": "eBike-Haus.de GmbH",
     "website": "https://ebike-haus.de",
@@ -26,8 +26,4 @@
         # Deutsche Lokalisierung (Kontenrahmen SKR03/SKR04, Steuern)
         "l10n_de",
     ],
-    "data": [
-        "data/res_company_data.xml",
-    ],
-    "post_init_hook": "post_init_hook",
 }

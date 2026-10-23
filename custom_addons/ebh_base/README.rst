@@ -2,33 +2,35 @@
 eBH Basis-Einrichtung
 =====================
 
-Grundmodul für das eBike-Haus Leipzig. Die Installation richtet ein:
+Schlankes Grundmodul für das eBike-Haus Leipzig.
 
-* **Apps:** Kontakte, Verkauf, Einkauf, Lager, Kasse, Rechnungsstellung,
-  deutsche Lokalisierung.
-* **Firmenstammdaten** der eBike-Haus.de GmbH (aus Cycly und Impressum):
-  Anschrift, Kontakt, USt-IdNr., Steuernummer, Handelsregister,
-  Fußzeile für Belege.
-* **Kontenrahmen SKR04** (wie in Cycly), falls noch keiner geladen ist. Ein vorhandener
-  Kontenrahmen wird nie überschrieben.
-* **Lager legt das Modul nicht (mehr) an.** Lager werden direkt in der
-  Datenbank gepflegt (siehe ``docs/EINRICHTUNG.md``). Bis Version 19.0.1.0.1
-  legte das Modul das Außenlager an; dieses wurde am 23.10.2026 auf DEV vom
-  Modul entkoppelt.
+* **Apps:** installiert als Abhängigkeiten Kontakte, Verkauf, Einkauf, Lager,
+  Kasse, Rechnungsstellung und die deutsche Lokalisierung.
+* **Einrichtungs-Prüfung:** ``res.company.ebh_get_setup_status()`` liefert
+  ``{"ok": bool, "issues": [...]}`` (Apps, Land DE, USt-IdNr., Kontenrahmen
+  SKR04, Währung EUR, mindestens zwei Lager). Per JSON-RPC abfragbar, z. B. vor
+  einem Datenimport.
 
-Alle Daten sind ``noupdate``: Änderungen in Odoo bleiben bei Modul-Updates
-erhalten.
+Das Modul legt **keine Daten** an (Grundsatz „Datenbank vor Modul“, siehe
+``CLAUDE.md``). Firmendaten, Lager und Kontenrahmen werden in der Datenbank
+nach ``docs/EINRICHTUNG.md`` gepflegt.
 
-Noch nicht enthalten
+Achtung Kontenrahmen
 ====================
 
-* Bankverbindung (bitte in Odoo unter Rechnungsstellung → Konfiguration →
-  Bankkonten erfassen).
-* Logo.
-* Nachschubregel Außenlager → Laden.
+Wird das Modul auf einer Datenbank mit Land Deutschland installiert, lädt Odoo
+mit der Rechnungsstellung automatisch **SKR03**. Direkt danach – bevor irgendetwas
+gebucht wird – unter Rechnungsstellung › Einstellungen auf **SKR04** umstellen
+(geht nur ohne Buchungen). Die Einrichtungs-Prüfung meldet einen falschen
+Kontenrahmen.
 
-API
-===
+Versionen
+=========
 
-``res.company.ebh_get_setup_status()`` liefert ``{"ok": bool, "issues": [...]}``
-und kann per JSON-RPC abgefragt werden, z. B. vor einem Datenimport.
+* 19.0.1.1.0 – Firmendaten und automatisches Laden von SKR04 entfernt.
+* 19.0.1.0.2 – Lager-Daten entfernt.
+* 19.0.1.0.1 – Kontenrahmen SKR04 statt SKR03.
+
+Update von 19.0.1.0.1 oder älter: vorher das Außenlager abkoppeln (Eintrag
+``ebh_base.warehouse_aussenlager`` in ``ir.model.data`` löschen), sonst löscht
+Odoo beim Update das Lager.
