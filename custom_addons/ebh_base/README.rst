@@ -11,8 +11,10 @@ Grundmodul für das eBike-Haus Leipzig. Die Installation richtet ein:
   Fußzeile für Belege.
 * **Kontenrahmen SKR04** (wie in Cycly), falls noch keiner geladen ist. Ein vorhandener
   Kontenrahmen wird nie überschrieben.
-* **Lager:** "Laden Johannisplatz" (LADEN) als Hauptlager und
-  "Außenlager" (AUSL).
+* **Lager legt das Modul nicht (mehr) an.** Lager werden direkt in der
+  Datenbank gepflegt (siehe ``docs/EINRICHTUNG.md``). Bis Version 19.0.1.0.1
+  legte das Modul das Außenlager an; dieses wurde am 23.10.2026 auf DEV vom
+  Modul entkoppelt.
 
 Alle Daten sind ``noupdate``: Änderungen in Odoo bleiben bei Modul-Updates
 erhalten.

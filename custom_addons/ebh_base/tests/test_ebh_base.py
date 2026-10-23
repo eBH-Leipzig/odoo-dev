@@ -10,6 +10,9 @@ class TestEbhBase(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.company = cls.env.ref("base.main_company")
+        # Das Außenlager wird in der Datenbank angelegt, nicht vom Modul.
+        if cls.env["stock.warehouse"].search_count([]) < 2:
+            cls.env["stock.warehouse"].create({"name": "Außenlager", "code": "AUS"})
 
     # --- Happy Path -------------------------------------------------------
 
@@ -27,20 +30,12 @@ class TestEbhBase(TransactionCase):
         self.assertEqual(company.currency_id.name, "EUR")
         self.assertEqual(company.partner_id.lang, "de_DE")
 
-    def test_warehouses(self):
-        """Laden ist Hauptlager, das Außenlager existiert zusätzlich."""
-        warehouses = self.env["stock.warehouse"].search(
-            [("company_id", "=", self.company.id)], order="sequence, id"
+    def test_module_owns_no_warehouse(self):
+        """Lager gehören der Datenbank, nicht dem Modul (Grundsatz DB vor Modul)."""
+        owned = self.env["ir.model.data"].search(
+            [("module", "=", "ebh_base"), ("model", "=", "stock.warehouse")]
         )
-        self.assertEqual(warehouses.mapped("code")[:2], ["LADEN", "AUSL"])
-        self.assertEqual(
-            self.env.ref("ebh_base.warehouse_aussenlager").lot_stock_id.usage,
-            "internal",
-        )
-        order = self.env["sale.order"].create(
-            {"partner_id": self.env["res.partner"].create({"name": "Test"}).id}
-        )
-        self.assertEqual(order.warehouse_id, self.env.ref("stock.warehouse0"))
+        self.assertFalse(owned)
 
     def test_german_chart_of_accounts(self):
         """Deutscher Kontenrahmen ist geladen, Basis-Einrichtung vollständig."""

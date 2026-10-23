@@ -15,6 +15,10 @@
 - Git & Deployment: Vollautomatisiertes Multi-Environment CI/CD via GitHub Actions (`.github/workflows/deploy.yml`). Ein Push auf `dev` aktualisiert die DEV-Instanz, ein Merge/Push auf `main` aktualisiert die PROD-Instanz. Alle Web-Traffic-Routen laufen sicher über den externen Traefik-Proxy (`root_default` Netzwerk).
 
 ## 3. Architektur- & Codestandards (OCA-Richtlinien)
+- **Grundsatz Datenbank vor Modul (Vorgabe Wolfgang, 23.10.2026):**
+  - Felder, Lager, Kategorien, Stammdaten und Infos werden **direkt in der Odoo-Datenbank** angelegt (Einstellungen, Entwicklermodus) und in `docs/EINRICHTUNG.md` + `docs/AENDERUNGSPROTOKOLL.md` dokumentiert – nicht als Daten-XML in Modulen.
+  - **Funktionen** (Logik, die bei Updates verloren gehen könnte) kommen in Module. Wenige, nach Struktur gebündelte Module statt vieler kleiner.
+  - In ein Modul auslagern nur, wenn es wirklich nötig ist.
 - **Modul-Architektur:** Eure eigenen Module liegen AUSSCHLIESSLICH im Verzeichnis `custom_addons/` (in Docker gemountet nach `/mnt/extra-addons`).
 - **Niemals Core verändern:** Ausschließlich `_inherit` in Python und `<xpath>` in XML nutzen.
 - **OCA-Konventionen:**
