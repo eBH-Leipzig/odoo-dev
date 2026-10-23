@@ -53,9 +53,9 @@ Status: `[ ]` offen · `[x]` erledigt · `[~]` teilweise / mit Anmerkung
 | Punkt | DEV | PROD |
 |---|---|---|
 | Kategorien nach alter Shop-Struktur (siehe Änderungsprotokoll 23.10.), Kassen-Kategorie „Fahrräder“ | [x] | [ ] |
-| Attribute Farbe, Rahmengröße | [ ] | [ ] |
-| Eigenschaften an der Kategorie Fahrräder (Datenblatt: Spezifikationen, Antrieb, Ausstattung; Liste aus Prototyp `ebh_datenblatt/data/merkmale.xml`) | [ ] | [ ] |
-| Artikel „Freiposition“ (nicht lagergeführt, 19 %, in der Kasse) | [ ] | [ ] |
+| Attribute Farbe, Rahmengröße | [x] | [ ] |
+| Eigenschaften (Datenblatt) an „eBikes“ **und jeder Unterkategorie** – Odoo nutzt nur die Definition der eigenen Kategorie (Liste aus Prototyp `ebh_datenblatt/data/merkmale.xml`) | [x] | [ ] |
+| Artikel „Freiposition“ (Referenz FREI, nicht lagergeführt, 19 %, in der Kasse) | [x] | [ ] |
 | Automatisierungsregel: neuer Artikel ohne Interne Referenz bekommt die nächste Nummer (Start 57000) | [x] | [ ] |
 
 ## Kontakte
@@ -100,6 +100,9 @@ Status: `[ ]` offen · `[x]` erledigt · `[~]` teilweise / mit Anmerkung
   bekommen deshalb „Benutzer“-Rollen, nicht „Administrator“. Benutzer gibt es noch nicht (nur `admin`, Benachrichtigung „in Odoo“).
 - **Nachschub:** Laden Leipzig wird aus dem Außenlager nachgeschoben (Lager › Nachschub aus „Außenlager“).
 - **Vorgefunden, nicht von Claude:** Artikel „kaffee“ (Testdatum?) und Modul `ebh_mail` (installiert, Code noch nicht im Repo – ITler arbeitet daran).
+
+- **Datenblatt:** Bei neuen Fahrrad-Artikeln „Kassensystem“ anhaken und die Kassen-Kategorie „Fahrräder“ setzen (Odoo setzt das nicht automatisch).
+- **`ebh_base`:** Außenlager abgekoppelt. Deinstallation wartet, weil `ebh_mail` davon abhängt (ITler).
 
 ## Zu klären
 
