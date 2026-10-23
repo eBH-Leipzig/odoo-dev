@@ -7,10 +7,12 @@
 ## 2. Technische Infrastruktur & Versionierung
 - Plattform: Odoo Community Edition (Docker auf Hostinger VPS sowie lokaler Docker Dev-Container).
 - Version: Gesteuert über `.env` (`ODOO_VERSION=19.0`).
-- Lokaler Dev-Stack: PostgreSQL 16 (`db`), Odoo 19.0 mit Dev-Paketen (`web` via `Dockerfile.dev`).
+- Environments auf dem VPS:
+  - **PROD:** `odoo.ebike-haus.de` (Deploy aus `main`-Branch)
+  - **DEV:** `odoo-dev.ebike-haus.de` (Deploy aus `dev`-Branch)
 - Sprache Backend: Python 3 (strikt deklaratives ORM).
 - Schnittstellen: JSON-RPC fähig für externe Node.js/TypeScript-Services.
-- Git & Deployment: Jeder Push auf `main` deployt vollautomatisch via GitHub Actions auf den VPS (`.github/workflows/deploy.yml`).
+- Git & Deployment: Vollautomatisiertes Multi-Environment CI/CD via GitHub Actions (`.github/workflows/deploy.yml`). Ein Push auf `dev` aktualisiert die DEV-Instanz, ein Merge/Push auf `main` aktualisiert die PROD-Instanz. Alle Web-Traffic-Routen laufen sicher über den externen Traefik-Proxy (`root_default` Netzwerk).
 
 ## 3. Architektur- & Codestandards (OCA-Richtlinien)
 - **Modul-Architektur:** Eure eigenen Module liegen AUSSCHLIESSLICH im Verzeichnis `custom_addons/` (in Docker gemountet nach `/mnt/extra-addons`).
@@ -96,12 +98,14 @@ Wenn du eine Aufgabe bearbeitest:
 3. Validiere Manifest und XML-Syntax.
 4. Führe die Tests und Linter im lokalen Docker-Container aus (`docker compose exec web odoo -d postgres --test-enable --stop-after-init -i <modul_name>`).
 5. **Lokale Live-Prüfung ermöglichen:** Informiere den Nutzer, dass das Feature lokal unter `http://localhost:8069` im Browser bereitsteht und geprüft werden kann (Details siehe [`USER_GUIDE.md`](USER_GUIDE.md)), bevor der Code festgeschrieben wird.
-6. Führe im Terminal aus:
+6. Führe im Terminal aus, um den Code zunächst in die **DEV-Umgebung** zu deployen:
    ```bash
    git add .
    git commit -m "feat/test: [Beschreibung des Features inkl. Tests]"
-   git push origin main
+   git push origin dev
    ```
 7. Erkläre Wolfgang kurz:
+   - Dass das Feature nun auf `odoo-dev.ebike-haus.de` zum ausgiebigen Testen bereitsteht.
    - Welches Modul in Odoo aktiviert bzw. aktualisiert werden muss.
    - Was die automatischen Tests abdecken und wie er das Feature im Laden testen kann.
+8. Sobald das Feature auf DEV freigegeben wurde, öffne einen Pull Request von `dev` auf `main` oder führe einen Merge aus, um das Live-Deployment auf `odoo.ebike-haus.de` auszulösen.
