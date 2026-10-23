@@ -52,7 +52,7 @@ Status: `[ ]` offen · `[x]` erledigt · `[~]` teilweise / mit Anmerkung
 
 | Punkt | DEV | PROD |
 |---|---|---|
-| Kategorien nach Cycly-Struktur, Kassen-Kategorie „Fahrräder“ | [ ] | [ ] |
+| Kategorien nach alter Shop-Struktur (siehe Änderungsprotokoll 23.10.), Kassen-Kategorie „Fahrräder“ | [x] | [ ] |
 | Attribute Farbe, Rahmengröße | [ ] | [ ] |
 | Eigenschaften an der Kategorie Fahrräder (Datenblatt: Spezifikationen, Antrieb, Ausstattung; Liste aus Prototyp `ebh_datenblatt/data/merkmale.xml`) | [ ] | [ ] |
 | Artikel „Freiposition“ (nicht lagergeführt, 19 %, in der Kasse) | [ ] | [ ] |

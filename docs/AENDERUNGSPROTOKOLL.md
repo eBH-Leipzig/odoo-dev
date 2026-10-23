@@ -35,6 +35,8 @@ Rechnungsstellung, l10n_de sowie `ebh_base` (19.0.1.0.1, SKR04 geladen, Firmenda
 | [EINST] | Benachrichtigungen | Benutzer `admin`: „in Odoo“ statt per Mail |
 | [EINST] | Artikelnummer | Startwert auf Wunsch von eBH auf **57000** gesetzt (Puffer für neue Cycly-Nummern bis zum Umzug) |
 | [EINST] | EU-Steuerzuordnung | „Geschäftspartner EU (mit USt-ID)“: „USt-ID erforderlich“ eingeschaltet. Getestet: NL-Privatkunde → keine Zuordnung (deutsche USt), NL-Firma mit USt-ID → EU, DE-Kunde → Inland |
+| [EINST] | Artikelkategorien | Nach alter Shop-Struktur (vor Cycly), bereinigt und von eBH freigegeben: **eBikes** (eCitybike, eTrekkingbike, eSUV, eMountainbike, eKlapprad & Kompaktrad, eGravelbike, eCargo), **Zubehör** (Akku, Bremsen, Elektronik & Display, Gepäckträger & Schutzbleche, Helme, Kette & Tretlager, Laufräder, Lenker & Vorbau, Licht, Motor, Pumpen, Reifen & Schläuche, Sattel & Sattelstütze, Schaltung, Schlösser, Ständer, Taschen & Körbe, Sonstiges), **Werkstatt** (Services & Inspektionen, VanMoof-Teile). Odoo-Standardkategorien (Goods, Services, Expenses, Food) unverändert |
+| [EINST] | Kassen-Kategorie | „Fahrräder“ angelegt |
 | [TEST] | Testdaten EU-Regel | 3 Testkontakte und 3 Angebotsentwürfe angelegt und gelöscht (Angebotsnummern S00001–S00003 dadurch verbraucht, unkritisch) |
 
 Hinweis: Während der Arbeit war DEV etwa eine Minute nicht erreichbar (502/500), ohne Deployment.
