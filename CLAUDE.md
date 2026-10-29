@@ -129,3 +129,9 @@ Wenn du eine Aufgabe bearbeitest:
    - Welches Modul in Odoo aktiviert bzw. aktualisiert werden muss.
    - Was die automatischen Tests abdecken und wie er das Feature im Laden testen kann.
 8. Sobald das Feature auf DEV freigegeben wurde, öffne einen Pull Request von `dev` auf `main` oder führe einen Merge aus, um das Live-Deployment auf `odoo.ebike-haus.de` auszulösen.
+
+## 9. Agent-Skills (Claude Code)
+- Projekt-Skills liegen in `.claude/skills/` und stehen in Claude Code als `/<skill-name>` bereit. Quelle: [mattpocock/skills](https://github.com/mattpocock/skills), Versionen laut `skills-lock.json`.
+- Installiert (kuratierte Auswahl): `to-spec`, `to-tickets`, `implement-spec`, `implement`, `grill-me`, `grill-with-docs`, `grilling`, `domain-modeling`, `triage`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, `codebase-design`, `handoff`, `research`, `retro`, `setup-matt-pocock-skills`.
+- Bewusst nicht installiert: TypeScript-spezifische Skills, Schreib-/Lern-Skills, `code-review` (würde das eingebaute `/code-review` von Claude Code überdecken; `implement`/`implement-spec` nutzen dieses stattdessen) und `git-guardrails-claude-code` (blockiert `git push` und widerspricht damit Abschnitt 8).
+- `.agents/skills/` ist die Kopie für andere Agenten (Zoo Code). Wird ein Skill aktualisiert, beide Ordner gleich halten.

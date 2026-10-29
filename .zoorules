@@ -76,6 +76,7 @@ Das System dient als Warenwirtschaft (WaWi), Kasse (POS), Werkstattverwaltung un
 - **Navigation Steering & Kontext-Effizienz:**
   - Nutze `.scratch/<feature>/issues/`-Tickets und `docs/adr/` als verbindliche Single Sources of Truth für Spezifikationen und Architekturentscheidungen.
   - Lies niemals massive rohe Planungsdateien (`plans/*.txt`) wiederholt in voller Länge ein; orientiere dich stattdessen gezielt an den atomaren Tickets und ADRs.
+  - Agent-Skills liegen in `.agents/skills/` (Zoo Code) und als Kopie in `.claude/skills/` (Claude Code). Bei Updates beide Ordner gleich halten.
 - Wenn du eine Aufgabe erledigt und die Dateien geschrieben hast:
   1. Überprüfe die Syntax und Konsistenz aller `__manifest__.py` und `__init__.py`.
   2. Stelle sicher, dass automatisierte Tests in `tests/` vorhanden sind.
