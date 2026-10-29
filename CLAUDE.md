@@ -12,7 +12,7 @@
   - **DEV:** `odoo-dev.ebike-haus.de` (Deploy aus `dev`-Branch)
 - Sprache Backend: Python 3 (strikt deklaratives ORM).
 - Schnittstellen: JSON-RPC fähig für externe Node.js/TypeScript-Services.
-- Git & Deployment: Vollautomatisiertes Multi-Environment CI/CD via GitHub Actions (`.github/workflows/deploy.yml`). Ein Push auf `dev` aktualisiert die DEV-Instanz, ein Merge/Push auf `main` aktualisiert die PROD-Instanz. Alle Web-Traffic-Routen laufen sicher über den externen Traefik-Proxy (`root_default` Netzwerk).
+- Git & Deployment: Vollautomatisiertes Multi-Environment CI/CD via GitHub Actions (`.github/workflows/deploy.yml`). Ein Push auf `dev` aktualisiert die DEV-Instanz, ein Merge/Push auf `main` aktualisiert die PROD-Instanz. Vor jedem Deploy laufen die Modultests in GitHub Actions; scheitern sie, wird nicht deployt. Auf dem VPS hat jede Umgebung einen eigenen Checkout (`/docker/odoo-dev` auf `dev`, `/docker/odoo-prod` auf `main`) und ein eigenes Compose-Profil; den Ablauf (Sicherung, `-u` der eigenen Module, Neustart) macht `ops/deploy.sh`. Betrieb, Backup und Restore: [`docs/BETRIEB.md`](docs/BETRIEB.md). Alle Web-Traffic-Routen laufen sicher über den externen Traefik-Proxy (`root_default` Netzwerk).
 
 ## 3. Architektur- & Codestandards (OCA-Richtlinien)
 - **Grundsatz Datenbank vor Modul (Vorgabe Wolfgang, 23.10.2026):**

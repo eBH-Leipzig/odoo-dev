@@ -48,3 +48,18 @@ Rechnungsstellung, l10n_de sowie `ebh_base` (19.0.1.0.1, SKR04 geladen, Firmenda
 
 Hinweis: Während der Arbeit war DEV etwa eine Minute nicht erreichbar (502/500), ohne Deployment.
 Danach waren alle Daten unverändert vorhanden. Ursache unbekannt → ITler.
+
+## 29.10.2026 – Deployment DEV/PROD getrennt (Paket 0), durch Claude
+
+Befund: DEV und PROD liefen aus einem Checkout `/docker/odoo-dev` (Branch `dev`); PROD band
+damit den DEV-Code ein. Kein Backup außer Hostinger, Start immer mit `-i base`, keine Tests
+vor dem Deploy. PROD (`prod_db`) enthält nur die Grundinstallation (5 Kontakte, 4 Benutzer,
+keine Apps).
+
+| Art | Änderung | Details |
+|---|---|---|
+| [SERVER] | SSH-Benutzer `claude` | eigener Schlüssel, Gruppe `docker`, kein sudo (eingerichtet von eBH) |
+| [MODUL] | `docker-compose.yml` | Profile `dev`/`prod`, feste Volume-Namen, kein `-i base` mehr beim Start |
+| [MODUL] | `ops/deploy.sh`, `ops/backup.sh` | Deploy mit Sicherung (PROD) und `-u` der eigenen Module; Backup von DB und Dateiablage nach `/docker/backups` |
+| [MODUL] | `deploy.yml` | Modultests vor jedem Deploy; PROD deployt nach `/docker/odoo-prod` |
+| [SERVER] | Umstellung PROD auf `/docker/odoo-prod` | offen, siehe [`BETRIEB.md`](BETRIEB.md) |

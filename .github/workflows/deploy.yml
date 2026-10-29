@@ -6,8 +6,45 @@ on:
       - main
       - dev
 
+# Nie zwei Deploys derselben Umgebung gleichzeitig
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
+  # Modultests in einer frischen Datenbank; schlagen sie fehl, wird nicht deployt
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: odoo:19.0
+      options: --user root
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Modultests
+        run: |
+          MODULES="$(find custom_addons -mindepth 2 -maxdepth 2 -name __manifest__.py \
+            -exec dirname {} \; | xargs -n1 basename | sort | paste -sd, -)"
+          echo "Teste: $MODULES"
+          odoo --addons-path="$GITHUB_WORKSPACE/custom_addons,/usr/lib/python3/dist-packages/odoo/addons" \
+            --db_host=postgres --db_user=odoo --db_password=odoo \
+            -d ci_test -i "$MODULES" --test-enable --stop-after-init \
+            --no-http --log-level=test
+
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to DEV
@@ -17,13 +54,13 @@ jobs:
           host: ${{ vars.HOST_IP }}
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 30m
           script: |
+            set -e
             cd /docker/odoo-dev
             git fetch origin dev
             git reset --hard origin/dev
-            docker compose pull odoo-dev odoo-db-dev
-            docker compose up -d --remove-orphans odoo-dev odoo-db-dev
-            docker compose restart odoo-dev
+            bash ops/deploy.sh dev
 
       - name: Deploy to PROD
         if: github.ref == 'refs/heads/main'
@@ -32,10 +69,10 @@ jobs:
           host: ${{ vars.HOST_IP }}
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 30m
           script: |
-            cd /docker/odoo-dev
+            set -e
+            cd /docker/odoo-prod
             git fetch origin main
             git reset --hard origin/main
-            docker compose pull odoo-prod odoo-db-prod
-            docker compose up -d --remove-orphans odoo-prod odoo-db-prod
-            docker compose restart odoo-prod
+            bash ops/deploy.sh prod
