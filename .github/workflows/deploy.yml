@@ -6,15 +6,15 @@ on:
       - main
       - dev
 
-# Nie zwei Deploys derselben Umgebung gleichzeitig
-concurrency:
-  group: deploy-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
-  # Modultests in einer frischen Datenbank; schlagen sie fehl, wird nicht deployt
+  # Modultests in einer frischen Datenbank; schlagen sie fehl, wird nicht deployt.
+  # Nur die Tests der eigenen Module (--test-tags), nicht die von sale, stock, ...
   test:
     runs-on: ubuntu-latest
+    # Ein neuer Push ersetzt einen noch laufenden Testlauf
+    concurrency:
+      group: test-${{ github.ref }}
+      cancel-in-progress: true
     container:
       image: odoo:19.0
       options: --user root
@@ -37,15 +37,20 @@ jobs:
         run: |
           MODULES="$(find custom_addons -mindepth 2 -maxdepth 2 -name __manifest__.py \
             -exec dirname {} \; | xargs -n1 basename | sort | paste -sd, -)"
+          TAGS="$(echo "$MODULES" | sed 's/^/\//; s/,/,\//g')"
           echo "Teste: $MODULES"
           odoo --addons-path="$GITHUB_WORKSPACE/custom_addons,/usr/lib/python3/dist-packages/odoo/addons" \
             --db_host=postgres --db_user=odoo --db_password=odoo \
-            -d ci_test -i "$MODULES" --test-enable --stop-after-init \
+            -d ci_test -i "$MODULES" --test-enable --test-tags "$TAGS" --stop-after-init \
             --no-http --log-level=test
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
+    # Nie zwei Deploys derselben Umgebung gleichzeitig, laufende nie abbrechen
+    concurrency:
+      group: deploy-${{ github.ref }}
+      cancel-in-progress: false
     steps:
       - name: Deploy to DEV
         if: github.ref == 'refs/heads/dev'

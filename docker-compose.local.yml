@@ -1,0 +1,15 @@
+# Nur für den lokalen Dev-Container (Windows/Docker Desktop), nicht auf dem VPS.
+# Wird über COMPOSE_FILE in der lokalen .env zusätzlich geladen:
+#   COMPOSE_PATH_SEPARATOR=,
+#   COMPOSE_FILE=docker-compose.yml,docker-compose.local.yml
+# Odoo dann unter http://localhost:8069, ohne Traefik.
+services:
+  odoo-dev:
+    ports:
+      - "8069:8069"
+      - "8072:8072"
+    networks: !override
+      - default
+
+networks:
+  root_default: !reset null

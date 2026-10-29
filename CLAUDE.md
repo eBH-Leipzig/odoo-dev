@@ -60,7 +60,8 @@ Für die lokale Entwicklung und das Ausführen von Tests steht ein dedizierter D
   ```
 
 ### Ports & Entwicklungs-Features
-- **Web-Interface:** `http://localhost:8069`
+- **Web-Interface:** `http://localhost:8069` (Ports kommen aus `docker-compose.local.yml`, eingebunden über `COMPOSE_FILE` in der lokalen `.env`, siehe `.env.example`). Erststart einer leeren lokalen Datenbank: `bash ops/deploy.sh dev`.
+- **Tests nur für eigene Module:** Ohne `--test-tags /<addon>` laufen auch alle Tests von sale, stock, account usw. (über 10 Minuten statt Sekunden). In Git Bash vorher `export MSYS_NO_PATHCONV=1`, sonst wird `/<addon>` zu einem Windows-Pfad.
 - **Longpolling / WebSockets:** Port `8072`
 - **Remote Debugging (`debugpy`):** Port `5678`
 - **Live-Reloading & Vorschau vor Commit:** Odoo startet im Dev-Modus (`--dev=xml,reload,qweb,sql,werkzeug`). Änderungen in `custom_addons/` werden live nachgeladen. Entwickler und Tester (z. B. Wolfgang) können Anpassungen direkt unter `http://localhost:8069` im Browser testen und verifizieren, **bevor** Änderungen committet oder gepusht werden.
@@ -74,7 +75,7 @@ Tests und Code-Quality-Prüfungen werden direkt im `odoo-dev`-Container ausgefü
   ```
 - **Modultests ausführen (Pflicht vor jedem Commit, Port 8070 gegen Port-Kollisionen):**
   ```bash
-  docker compose exec odoo-dev odoo --test-enable --stop-after-init -u <addon_name> -d dev_db --db_host=odoo-db-dev -r odoo -w odoopass --http-port=8070
+  docker compose exec odoo-dev odoo --test-enable --test-tags /<addon_name> --stop-after-init -u <addon_name> -d dev_db --db_host=odoo-db-dev -r odoo -w odoopass --http-port=8070
   ```
 - **Pre-Review Lint & Format Compound Check (vor Code-Review):**
   ```bash
@@ -115,7 +116,7 @@ Wenn du eine Aufgabe bearbeitest:
 4. Führe den Pre-Review Compound Check und die Modultests im lokalen Container aus:
    ```bash
    docker compose exec odoo-dev bash -c "black --check /mnt/extra-addons/<addon> && flake8 --config=/mnt/extra-addons/.flake8 /mnt/extra-addons/<addon>"
-   docker compose exec odoo-dev odoo --test-enable --stop-after-init -u <addon_name> -d dev_db --db_host=odoo-db-dev -r odoo -w odoopass --http-port=8070
+   docker compose exec odoo-dev odoo --test-enable --test-tags /<addon_name> --stop-after-init -u <addon_name> -d dev_db --db_host=odoo-db-dev -r odoo -w odoopass --http-port=8070
    ```
 5. **Lokale Live-Prüfung ermöglichen:** Informiere den Nutzer, dass das Feature lokal unter `http://localhost:8069` im Browser bereitsteht und geprüft werden kann (Details siehe [`USER_GUIDE.md`](USER_GUIDE.md)), bevor der Code festgeschrieben wird.
 6. Führe im Terminal aus, um den Code zunächst in die **DEV-Umgebung** zu deployen:
