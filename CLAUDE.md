@@ -1,7 +1,7 @@
 # PROJEKT-RICHTLINIEN: eBike-Haus Leipzig (eBH) - Odoo WaWi
 
 ## 1. Über das Unternehmen & Einsatzbereich
-- Fahrrad- und E-Bike-Fachhandel in Leipzig.
+- Fahrrad- und eBike-Fachhandel in Leipzig.
 - Einsatzbereich: Warenwirtschaft (WaWi), Kasse (POS), Werkstatt, Seriennummern-Tracking, Dienstrad-Leasing.
 
 ## 2. Technische Infrastruktur & Versionierung
@@ -128,7 +128,7 @@ Wenn du eine Aufgabe bearbeitest:
    - Dass das Feature nun auf `odoo-dev.ebike-haus.de` zum ausgiebigen Testen bereitsteht.
    - Welches Modul in Odoo aktiviert bzw. aktualisiert werden muss.
    - Was die automatischen Tests abdecken und wie er das Feature im Laden testen kann.
-8. Sobald das Feature auf DEV freigegeben wurde, öffne einen Pull Request von `dev` auf `main` oder führe einen Merge aus, um das Live-Deployment auf `odoo.ebike-haus.de` auszulösen.
+8. Sobald das Feature auf DEV freigegeben wurde, öffne einen Pull Request von `dev` auf `main`. **Niemals selbst mergen oder direkt auf `main` pushen:** Prüfung, Freigabe und Merge (und damit das Live-Deployment auf `odoo.ebike-haus.de`) macht ausschließlich der Programmierer.
 
 ## 9. Agent-Skills (Claude Code)
 - Projekt-Skills liegen in `.claude/skills/` und stehen in Claude Code als `/<skill-name>` bereit. Quelle: [mattpocock/skills](https://github.com/mattpocock/skills), Versionen laut `skills-lock.json`.

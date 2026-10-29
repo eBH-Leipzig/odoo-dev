@@ -63,3 +63,10 @@ keine Apps).
 | [MODUL] | `ops/deploy.sh`, `ops/backup.sh` | Deploy mit Sicherung (PROD) und `-u` der eigenen Module; Backup von DB und Dateiablage nach `/docker/backups` |
 | [MODUL] | `deploy.yml` | Modultests vor jedem Deploy; PROD deployt nach `/docker/odoo-prod` |
 | [SERVER] | Umstellung PROD auf `/docker/odoo-prod` | offen, siehe [`BETRIEB.md`](BETRIEB.md) |
+
+## 29.10.2026 – Agent-Regeln: PR-Freigabe nur durch den Programmierer (Vorgabe Wolfgang), durch Claude
+
+| Art | Änderung | Details |
+|---|---|---|
+| [MODUL] | `CLAUDE.md` Abschnitt 8, `.zoorules` Schritt 7 | Agenten öffnen nur den PR `dev` → `main`; nie selbst mergen oder direkt auf `main` pushen – Freigabe und Merge nur durch den Programmierer. Schreibweise „eBike“ statt „E-Bike“ |
+| [SERVER] | Branch-Schutz `main` | offen: PR ist Pflicht, aber 0 Freigaben verlangt und für Admins nicht erzwungen – mindestens 1 Freigabe einstellen, damit die Regel auch technisch greift (Sache des Programmierers) |

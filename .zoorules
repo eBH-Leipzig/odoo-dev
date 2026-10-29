@@ -1,8 +1,8 @@
 # PROJEKT-KONTEXT: eBike-Haus Leipzig (eBH) - Odoo WaWi
 
 ## 1. Unternehmung & Ziel
-Wir entwickeln Custom-Module für ein Fahrrad- und E-Bike-Einzelhandelsunternehmen ("eBike-Haus Leipzig"). 
-Das System dient als Warenwirtschaft (WaWi), Kasse (POS), Werkstattverwaltung und Lager für Fahrräder, E-Bikes, Teile und Zubehör.
+Wir entwickeln Custom-Module für ein Fahrrad- und eBike-Einzelhandelsunternehmen ("eBike-Haus Leipzig"). 
+Das System dient als Warenwirtschaft (WaWi), Kasse (POS), Werkstattverwaltung und Lager für Fahrräder, eBikes, Teile und Zubehör.
 
 ## 2. Technische Umgebung & Stack
 - **System:** Odoo Community Edition (Laufend in Docker auf Hostinger VPS sowie lokaler Docker Dev-Container)
@@ -45,7 +45,7 @@ Das System dient als Warenwirtschaft (WaWi), Kasse (POS), Werkstattverwaltung un
    - Den externen Kunden stattdessen ausschließlich als Autor (`author_id`) oder im Chatter-Nachrichtentext bzw. den Metadaten vermerken.
 
 ## 5. Fachliche Domänen-Logik (Fahrradhandel)
-- **Fahrräder & E-Bikes:** Werden über `stock.lot` (Seriennummern) verwaltet. Wichtige Attribute: Rahmennummer, Rahmenhöhe, Akkukapazität (Wh), Motortyp (Bosch, Shimano etc.), Schlüsselnummer.
+- **Fahrräder & eBikes:** Werden über `stock.lot` (Seriennummern) verwaltet. Wichtige Attribute: Rahmennummer, Rahmenhöhe, Akkukapazität (Wh), Motortyp (Bosch, Shimano etc.), Schlüsselnummer.
 - **Leasing:** In Deutschland relevant: Dienstrad-Leasing (JobRad, Bikeleasing, BusinessBike). Verkaufsaufträge und Rechnungen müssen Leasing-Referenzen unterstützen.
 - **Werkstatt:** Service- und Inspektionsaufträge benötigen Checklisten und Status-Tracking.
 
@@ -88,4 +88,4 @@ Das System dient als Warenwirtschaft (WaWi), Kasse (POS), Werkstattverwaltung un
   4. Informiere den Nutzer, dass die Änderungen lokal unter `http://localhost:8069` im Browser getestet werden können, bevor sie festgeschrieben werden (siehe [`USER_GUIDE.md`](USER_GUIDE.md)).
   5. Führe im Terminal `git add .`, `git commit -m "..."` und `git push origin dev` aus, damit das Deployment in die Testumgebung (`odoo-dev`) auf den Server automatisch startet.
   6. Erkläre dem Nutzer kurz, welches Modul in Odoo unter "Apps" auf `odoo-dev.ebike-haus.de` aktualisiert bzw. installiert werden muss.
-  7. Nach Freigabe durch den Nutzer öffne einen Pull Request von `dev` nach `main` oder führe einen Merge aus, um das Feature in die Produktion (`odoo.ebike-haus.de`) zu überführen.
+  7. Nach Freigabe durch den Nutzer öffne einen Pull Request von `dev` nach `main`. Niemals selbst mergen oder direkt auf `main` pushen: Prüfung, Freigabe und Merge in die Produktion (`odoo.ebike-haus.de`) macht ausschließlich der Programmierer.
